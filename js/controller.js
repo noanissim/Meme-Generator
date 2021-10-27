@@ -164,9 +164,9 @@ function drawText(x, y, idx) {
 
 function drawRect(x, y, idx) {
     gCtx.beginPath();
-    gCtx.rect(x, y - 10, x + 200 + gMeme.lines[idx].txt.length, 70);
+    gCtx.rect(x, y - 10, x + 200 + gMeme.lines[idx].txt.length, 60);
     gCtx.fillStyle = "rgba(255, 255, 255, 0.4)";
-    gCtx.fillRect(x, y - 10, x + 200 + gMeme.lines[idx].txt.length, 70);
+    gCtx.fillRect(x, y - 10, x + 200 + gMeme.lines[idx].txt.length, 60);
     gCtx.strokeStyle = (gMeme.lines[idx].isMarked) ? 'red' : 'black';
     gCtx.stroke();
 }
