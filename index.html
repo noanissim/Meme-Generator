@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator!</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body onload="init()">
+    <h1>Meme Generator!</h1>
+
+    <div class="image-gallery-container">
+        <div class="gallery-control"></div>
+        <div class="images-grid"></div>
+    </div>
+
+    <div class="meme-editor-container">
+        <div class="canvas-container">
+            <canvas width="500" height="500"></canvas>
+        </div>
+
+        <div class="control-box-container">
+            <input type="text" name="textLine" id="textLine" placeholder="Enter text line"
+                oninput="onChangeLineText(this.value)"><br>
+            <div class="buttons">
+                <button class="btn-control btn-grad" onclick="onChangePosition(10)">⬇</button>
+                <button class="btn-control btn-grad" onclick="onChangePosition(-10)">⬆</button>
+                <button class="btn-control btn-grad" onclick="onChangeLineIdx()">⬆⬇</button>
+                <button class="btn-control btn-grad">+</button>
+                <button class="btn-control btn-grad">❌</button>
+                <button class="btn-control btn-grad" onclick="onChangeFontSize(10)">A+</button>
+                <button class="btn-control btn-grad" onclick="onChangeFontSize(-10)">A-</button>
+                <button class="btn-control btn-grad">left</button>
+                <button class="btn-control btn-grad">center</button>
+                <button class="btn-control btn-grad">right</button>
+            </div>
+
+            <select name="changeFont">
+                <option value="impact">Impact</option>
+                <option value="arial">Arial</option>
+                <option value="halvatice">Halvatice</option>
+            </select>
+            <input title="colorStroke" type="color" name="colorStroke" id="" value="#000000"
+                oninput="onChangeColorStroke(this.value)">
+            <input title="colorFill" type="color" name="colorFill" id="" value="#ffffff"
+                oninput="onChangeColorFill(this.value)">
+            <section class="stickers-section">stickers</section>
+            <section class="share-save-container">
+                <button>save</button>
+                <button>share</button>
+                <button>download</button>
+            </section>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="js/storage.js"></script>
+    <script src="js/service.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
