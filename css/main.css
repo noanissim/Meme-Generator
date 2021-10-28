@@ -219,7 +219,6 @@ body.menu-open .main-screen {
         background-color: #fff;
         width: fit-content;
         object-fit: contain;
-        cursor: grab;
 
 
     }
@@ -230,6 +229,8 @@ body.menu-open .main-screen {
         transform: translateX(50%);
         transform: translateY(50%);
         transform: translate(-0%, -0%);
+        cursor: grab;
+
     }
 
     .meme-editor-container {
@@ -264,7 +265,7 @@ body.menu-open .main-screen {
         background-color: #fff;
         width: fit-content;
         object-fit: contain;
-        cursor: grab;
+        /* cursor: grab; */
 
     }
 
@@ -328,7 +329,7 @@ body.menu-open .main-screen {
         background-color: #fff;
         width: fit-content;
         object-fit: contain;
-        cursor: grab;
+        /* cursor: grab; */
 
     }
 }
@@ -392,6 +393,8 @@ body.menu-open .main-screen {
 .input-text {
     width: 250px;
     height: 40px;
+    border-radius: 10px;
+
 }
 
 .input-text:focus {
@@ -401,9 +404,33 @@ body.menu-open .main-screen {
 /* .btn-control {} */
 .stickers-section {
     width: 100%;
-    background-color: #b3b9b9;
+    background-color: #d2dada;
     height: 60px;
     margin: 10px auto;
+}
+
+.select-font {
+    position: relative;
+    font-family: Arial;
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
+}
+
+
+
+
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    margin-top: 3px;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
 }
 
 

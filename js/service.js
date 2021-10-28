@@ -112,27 +112,26 @@ var gMeme = {
     height: 0,
 
     lines: [{
-            txt: 'hello',
+            txt: 'aaa',
             size: 50,
             align: 'center',
+            font: 'impact',
             isMarked: false,
-            posX: 0,
-            posY: 0,
+            posX: 100,
+            posY: 25,
             isClicked: false,
-
-            // color: 'white'
+            isDrag: false
         },
         {
-            txt: 'world!',
+            txt: 'bbb',
             size: 50,
             align: 'center',
+            font: 'impact',
             isMarked: false,
-            posX: 0,
-            posY: 0,
+            posX: 100,
+            posY: 400,
             isClicked: false,
-
-
-            // color: 'white'
+            isDrag: false
         }
     ]
 }
@@ -143,12 +142,13 @@ function getImg(imgId) {
     })
 }
 
-function createText(pos) {
-    gText = {
-        pos,
-    }
-}
 
+
+function setFont(font) {
+    (gMeme.lines).forEach(function (obj) {
+        obj.font = font
+    })
+}
 
 
 function toggleMenu() {
@@ -159,4 +159,15 @@ function toggleMenu() {
         document.body.classList.add('menu-open')
         document.querySelector('.btn-menu').innerText = 'X'
     }
+}
+
+
+function setRectisDrag(isDrag) {
+    gMeme.lines[gMeme.selectedLineIdx].isDrag = isDrag
+}
+
+
+function moveRect(dx, dy) {
+    gMeme.lines[gMeme.selectedLineIdx].posX += dx
+    gMeme.lines[gMeme.selectedLineIdx].posY += dy
 }

@@ -9,6 +9,8 @@ var elContainer
 var gRects = []
 var posTopRect
 var posBottomRect
+var posMiddleRect
+var gIsDownload = false
 const gTouchEvs = ['touchstart', 'touchmove', 'touchend']
 
 
@@ -26,12 +28,17 @@ function initEditor() {
 function renderCanvas() {
     gCtx.save()
     drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
-    renderRectTop()
+    if (!gIsDownload) {
+        renderRectTop()
+        renderRectBottom()
+        if (gMeme.lines.length > 2) {
+            renderRectMiddle()
+        }
+
+    }
     renderTextTop()
-    renderRectBottom()
     renderTextBottom()
-    // gCtx.fillStyle = "#fff"
-    // gCtx.fillRect(0, 0, gElCanvas.width, gElCanvas.height)
+    renderTextMiddle()
 
     gCtx.restore()
 }
@@ -44,10 +51,10 @@ function renderGallery() {
     document.querySelector('.images-grid').innerHTML = strHtml;
 }
 
-function renderEditor() {
-    var strHtml = ''
-    strHtml += ``
-}
+// function renderEditor() {
+//     var strHtml = ''
+//     strHtml += ``
+// }
 
 
 //**************************TOUCH EVENTS***************************************** */
@@ -64,7 +71,6 @@ function addMouseListeners() {
     gElCanvas.addEventListener('mousemove', onMove)
     gElCanvas.addEventListener('mousedown', onDown)
     gElCanvas.addEventListener('mouseup', onUp)
-    gElCanvas.addEventListener('mouseout', onOut) //out off canvas
 }
 
 function addTouchListeners() {
@@ -73,6 +79,8 @@ function addTouchListeners() {
     gElCanvas.addEventListener('touchend', onUp)
 }
 
+
+//***the resize caused me a lot of bugs, so I didnt used it, i did manually resize canvas in css by media queries */
 function resizeCanvas() {
     // elContainer = document.querySelector('.canvas-container')
     // if(elContainer.offsetWidth )
@@ -82,30 +90,28 @@ function resizeCanvas() {
 
 function onDown(ev) {
     const pos = getEvPos(ev)
-    console.log(pos);
     if (!isRectClicked(pos)) return
-    createShape(pos)
-    renderShape(pos)
-    setMouseDrag(true)
+    setRectisDrag(true)
     gStartPos = pos
     document.body.style.cursor = 'grabbing'
 }
 
 function onMove(ev) {
-    const pos = getEvPos(ev)
-    if (gIsMouseDown) {
+    if (gMeme.lines[gMeme.selectedLineIdx].isDrag) {
+        const pos = getEvPos(ev)
+        const dx = pos.x - gStartPos.x
+        const dy = pos.y - gStartPos.y
+        gMeme.lines[gMeme.selectedLineIdx].posX += dx
+        gMeme.lines[gMeme.selectedLineIdx].posY += dy
         gStartPos = pos
-        renderShape(pos)
+        moveRect(dx, dy)
+        renderCanvas()
     }
 }
 
 function onUp() {
-    gIsMouseDown = false
+    setRectisDrag(false)
     document.body.style.cursor = 'grab'
-}
-
-function onOut() {
-    gIsMouseDown = false
 }
 
 function getEvPos(ev) {
@@ -113,6 +119,7 @@ function getEvPos(ev) {
         x: ev.offsetX,
         y: ev.offsetY
     }
+
     if (gTouchEvs.includes(ev.type)) {
         ev.preventDefault() //to avoid scrolling in touchscreen
         ev = ev.changedTouches[0]
@@ -125,7 +132,6 @@ function getEvPos(ev) {
 }
 
 
-
 //****************************EDITOR-BUTTONS************************************* */
 function onChangeColorStroke(color) {
     if (color !== '#000000') gColorStroke = color
@@ -136,26 +142,75 @@ function onChangeColorFill(color) {
 
 }
 
+function onSetFont(font) {
+    setFont(font)
+}
 
+function onChangeAlign(value) {
+    gMeme.lines[gMeme.selectedLineIdx].align = value
+}
+
+//***deleting lines caused bugs(the render tries to render something that doesnt exist so setting the deleted items offset was my solution to this bug) */
+function onDeleteLine() {
+    gMeme.lines[gMeme.selectedLineIdx].posX = 600
+    gMeme.lines[gMeme.selectedLineIdx].posY = 600
+}
+
+
+
+//*******************************ADDING LINES******************************************* */
+function onAddLine() {
+    var newLine = prompt('Enter the new line')
+    console.log(newLine);
+    var elNewLine = {
+        txt: newLine,
+        size: 50,
+        align: 'center',
+        font: 'impact',
+        isMarked: true,
+        posX: 100,
+        posY: 180,
+        isClicked: false,
+        isDrag: false
+    }
+    gMeme.lines.push(elNewLine)
+    gMeme.selectedLineIdx = gMeme.lines.length - 1
+    renderAllMiddles()
+}
+
+function renderAllMiddles() {
+    for (var i = 2; i < gMeme.lines.length; i++) {
+        renderTextMiddle()
+        renderRectMiddle()
+        onChangeLineIdx()
+        drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
+    }
+}
 
 
 //**************************RENDER-TEXT AND RECT********************************************* */
 function renderTextTop() {
     var posTop = {
-        x: gElCanvas.width / 2,
-        y: gElCanvas.height / 8,
+        x: gMeme.lines[0].posX + 150,
+        y: gMeme.lines[0].posY + 40
     }
-
     drawText(posTop.x, posTop.y, 0)
 }
 
 function renderTextBottom() {
     var posBottom = {
-        x: (gElCanvas.width / 2),
-        y: (gElCanvas.height / 8) * 7,
+        x: gMeme.lines[1].posX + 150,
+        y: gMeme.lines[1].posY + 40
     }
     drawText(posBottom.x, posBottom.y, 1)
+}
 
+function renderTextMiddle() {
+    var posMiddle = {
+        x: gMeme.lines[gMeme.lines.length - 1].posX + 150 + gMeme.lines.length,
+        y: gMeme.lines[gMeme.lines.length - 1].posY + 40 + gMeme.lines.length
+    }
+    drawText(posMiddle.x, posMiddle.y, gMeme.lines.length - 1)
 }
 
 function drawText(x, y, idx) {
@@ -164,7 +219,7 @@ function drawText(x, y, idx) {
     gCtx.lineWidth = 3;
     gCtx.strokeStyle = gColorStroke;
     gCtx.fillStyle = gColorFill;
-    gCtx.font = gMeme.lines[idx].size + 'px Impact';
+    gCtx.font = gMeme.lines[idx].size + 'px ' + gMeme.lines[idx].font;
     gCtx.textAlign = gMeme.lines[idx].align;
     gCtx.fillText(text, x, y);
     gCtx.strokeText(text, x, y);
@@ -173,29 +228,32 @@ function drawText(x, y, idx) {
 
 function renderRectTop() {
     posTopRect = {
-        x: gElCanvas.width / 2 - 150,
-        y: 25
+        x: gMeme.lines[0].posX,
+        y: gMeme.lines[0].posY
     }
     drawRect(posTopRect.x, posTopRect.y, 0)
-
-    gMeme.lines[0].posX = posTopRect.x
-    gMeme.lines[0].posY = posTopRect.y
-
 }
+
+function renderRectMiddle() {
+    posMiddleRect = {
+        x: gMeme.lines[gMeme.lines.length - 1].posX + gMeme.lines.length,
+        y: gMeme.lines[gMeme.lines.length - 1].posY + gMeme.lines.length
+    }
+    drawRect(posMiddleRect.x, posMiddleRect.y, gMeme.lines.length - 1)
+}
+
 
 function renderRectBottom() {
     posBottomRect = {
-        x: gElCanvas.width / 2 - 150,
-        y: 400
+        x: gMeme.lines[1].posX,
+        y: gMeme.lines[1].posY
     }
     drawRect(posBottomRect.x, posBottomRect.y, 1)
-
-    gMeme.lines[1].posX = posBottomRect.x
-    gMeme.lines[1].posY = posBottomRect.y
 }
 
 function drawRect(x, y, idx) {
     gCtx.beginPath();
+    gCtx.lineWidth = 2;
     // gCtx.rect(x, y - 10, x + 200 + gMeme.lines[idx].txt.length, 60);
     gCtx.rect(x, y - 10, 300, 60);
     gCtx.fillStyle = "rgba(255, 255, 255, 0.4)";
@@ -204,64 +262,65 @@ function drawRect(x, y, idx) {
     gCtx.stroke();
 }
 
+
+
+//*************************MORE FUNCTIONS CANVAS RELATED******************************************** */
 function onChangeLineIdx() {
     gMeme.selectedLineIdx++
-    if (gMeme.selectedLineIdx > 1) gMeme.selectedLineIdx = 0
-    console.log(gMeme.selectedLineIdx);
+    if (gMeme.selectedLineIdx > gMeme.lines.length - 1) gMeme.selectedLineIdx = 0
+    // console.log(gMeme.selectedLineIdx);
     MarkCurrRect(gMeme.selectedLineIdx)
 }
 
-function MarkCurrRect(lineIdx) {
-    gMeme.selectedLineIdx = lineIdx
-    for (var i = 0; i < gMeme.lines.length; i++) {
-        if (lineIdx === i) {
-            gMeme.lines[i].isMarked = true
-            gMeme.lines[i].isClicked = true
-        } else {
-            gMeme.lines[i].isMarked = false
-            gMeme.lines[i].isClicked = false
-        }
-    }
+function onChangeLineText(newText) {
+    var idx = gMeme.selectedLineIdx
+    gMeme.lines[idx].txt = newText
+    drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
+}
 
+function MarkCurrRect(lineIdx) {
+    for (var i = 0; i < gMeme.lines.length; i++) {
+        gMeme.lines[i].isMarked = (lineIdx === i)
+    }
     renderCanvas()
 }
 
 
 
 function isRectClicked(clickedPos) {
-    console.log(clickedPos);
     for (var i = 0; i < gMeme.lines.length; i++) {
         var posX = gMeme.lines[i].posX
         var posY = gMeme.lines[i].posY
-        if (clickedPos.x >= posX && clickedPos.x <= posX + 300 && clickedPos.y >= posY && clickedPos.y <= posY + 50) {
-            console.log('here!!!! ', i);
-            gMeme.lines[i].isClicked = true
-            gMeme.lines[i].isMarked = true
+
+        if (gElCanvas.offsetWidth >= 500) {
+            if (clickedPos.x >= posX && clickedPos.x <= posX + 300 && clickedPos.y >= posY && clickedPos.y <= posY + 50) {
+                gMeme.selectedLineIdx = i
+                gMeme.lines[i].isClicked = true
+                gMeme.lines[i].isMarked = true
+                return true
+            } else {
+                gMeme.lines[i].isClicked = false
+                gMeme.lines[i].isMarked = false
+            }
         } else {
-            gMeme.lines[i].isClicked = false
-            gMeme.lines[i].isMarked = false
+            if (clickedPos.x >= posX * 0.6 && clickedPos.x <= posX * 0.6 + 300 * 0.6 && clickedPos.y >= posY * 0.6 && clickedPos.y <= posY * 0.6 + 50 * 0.6) {
+                gMeme.selectedLineIdx = i
+                gMeme.lines[i].isClicked = true
+                gMeme.lines[i].isMarked = true
+                return true
+            } else {
+                gMeme.lines[i].isClicked = false
+                gMeme.lines[i].isMarked = false
+            }
         }
+
     }
     renderCanvas()
-
-}
-
-function clearCurrRectText(idx) {
-    // if (idx === 0) gCtx.clearRect(posTopRect.x, posTopRect.y - 10, posTopRect.x + 200, 60)
-    // gRects.splice(idx, 1)
-}
-
-function onChangeLineText(newText) {
-    var idx = gMeme.selectedLineIdx
-    console.log(newText);
-    gMeme.lines[idx].txt = newText
-    drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
-    // document.querySelector('#textLine').value = '';
 }
 
 
 
-//DRAW IMAGE ON CANVAS
+//*********************************DRAW IMAGE ON CANVAS*******************************
 function drawImgOnCanvas(src, width, height) {
 
     document.querySelector('.meme-editor-container').classList.remove('hidden');
@@ -272,8 +331,6 @@ function drawImgOnCanvas(src, width, height) {
 
         gCtx.drawImage(img, 0, 0, gElCanvas.width, heightCanvas) //img,x,y,xend,yend
         renderCanvas()
-        // MarkCurrRect(gMeme.selectedLineIdx)
-
 
     }
     document.querySelector('footer').style.display = 'none'
@@ -283,7 +340,6 @@ function drawImgOnCanvas(src, width, height) {
 
 function convertImage(image) {
     gCtx.clearRect(0, 0, gElCanvas.width, gElCanvas.height)
-    console.log(image);
     var src = image.src
     var width = image.offsetWidth
     var height = image.offsetHeight
@@ -296,41 +352,57 @@ function convertImage(image) {
 
 
 
-
-
-
-
 //*****************************Arrows-buttons********************************************** */
 function onChangeFontSize(value) {
     // changeFontSize(value, gMeme.selectedLineIdx)
     gMeme.lines[gMeme.selectedLineIdx].size += value
 }
 
-function onChangePosition(value) {
-    var idx = gMeme.selectedLineIdx
+function onChangePosition(value, valueX = 0) {
     gMeme.lines[gMeme.selectedLineIdx].posY += value
-    gMeme.lines[gMeme.selectedLineIdx].posX += value
-    console.log(gMeme.lines[gMeme.selectedLineIdx].posY);
-    drawRect(gMeme.lines[gMeme.selectedLineIdx].posX, gMeme.lines[gMeme.selectedLineIdx].posY + value, idx)
+    gMeme.lines[gMeme.selectedLineIdx].posX += valueX
+    // console.log(gMeme.lines[gMeme.selectedLineIdx].posY);
+    // drawRect(gMeme.lines[gMeme.selectedLineIdx].posX, gMeme.lines[gMeme.selectedLineIdx].posY + value, idx)
+    renderCanvas()
 
-
-    MarkCurrRect(idx)
 }
-
-
-
 
 
 //******************************IMAGE DOWNLOAD******************************
-function downloadCanvas(elLink) {
-    console.log(elLink);
-    var gCanvas = document.querySelector('canvas');
-    const data = gCanvas.toDataURL()
-    elLink.href = data
-    elLink.download = 'my-img.jpg'
+function saveCanvasWithoutRects(elLink) {
+    gIsDownload = true
+    renderCanvas()
+    return elLink
+    // drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
+    // console.log('save here');
+    // setTimeout(function () {
+    //     gCtx.clearRect(0, 0, gElCanvas.offsetWidth, gElCanvas.offsetHeight)
+    //     renderTextTop()
+    //     renderTextBottom()
+    //     if (gMeme.lines.length > 2) {
+    //         renderTextMiddle()
+    //     }
+    // }, 0)
+
 }
 
 
+function downloadCanvas(elLink) {
+    alert('********  למתרגל/ת שלום ********* You have 10 seconds to download the photo in the correct way, async problem I couldnt figure out how to solve it, doesnt work with setTimeOut, PRESS DOWNLOAD AGAIN')
+    var link1 = saveCanvasWithoutRects(elLink)
+    var gCanvas = document.querySelector('canvas');
+    const data = gCanvas.toDataURL()
+    link1.href = data
+    link1.download = 'my-img.jpg'
+    setTimeout(function () {
+        gIsDownload = false
+    }, 10000)
+
+
+}
+
+
+//*************************UPLOAD***************************************** */
 //IMAGE UPLOADING to img tag from file system: 
 function onImgInput(ev) {
     loadImageFromInput(ev, renderImg)
@@ -353,6 +425,18 @@ function renderImg(img) {
 
 
 function onSaveMeme() {
+    var gCanvas = document.querySelector('canvas');
+    localStorage.setItem('cnavasimg1', gCanvas.toDataURL());
+    onLoadImgFromStorage()
+}
+
+function onLoadImgFromStorage() {
+    var dataURL = localStorage.getItem('cnavasimg1');
+    var img = new Image;
+    img.src = dataURL;
+    document.querySelector('.save-tab-test').src = dataURL;
+    document.querySelector('.save-tab-img-p').innerText = 'This is temporary solution until I build the memes saved tab container';
+    document.querySelector('.meme-editor-container').classList.add('hidden');
 
 }
 
@@ -366,8 +450,6 @@ function uploadImg() { //shows the url link and button share
     // A function to be called if request succeeds: creates the link in douploadimage
     function onSuccess(uploadedImgUrl) {
         const encodedUploadedImgUrl = encodeURIComponent(uploadedImgUrl)
-        // document.querySelector('.user-msg').innerText = `Your photo is available here:`
-        // document.querySelector('.user-msg-link').innerHTML = `<a href="${uploadedImgUrl}" target="_blank">click here!</a>`;
 
         document.querySelector('.share-facebook').innerHTML = `
         <a class="share" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUploadedImgUrl}&t=${encodedUploadedImgUrl}" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${uploadedImgUrl}&t=${uploadedImgUrl}'); return false;">
