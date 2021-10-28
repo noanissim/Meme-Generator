@@ -4,11 +4,7 @@ function init() {
     renderGallery()
     initEditor()
     document.querySelector('.meme-editor-container').classList.add('hidden');
+    document.querySelector('.image-gallery-container').classList.remove('hidden');
+    // document.querySelector('footer').classList.remove('hidden');
 
-}
-
-function toggleMenu() {
-    var mainMenu = document.getElementById('mainMenu');
-    console.log(mainMenu);
-    mainMenu.classList.toggle('open');
 }

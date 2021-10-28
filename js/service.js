@@ -112,12 +112,13 @@ var gMeme = {
     height: 0,
 
     lines: [{
-            txt: 'hello!',
+            txt: 'hello',
             size: 50,
             align: 'center',
             isMarked: false,
-            posX: 25,
-            posY: 100,
+            posX: 0,
+            posY: 0,
+            isClicked: false,
 
             // color: 'white'
         },
@@ -126,8 +127,10 @@ var gMeme = {
             size: 50,
             align: 'center',
             isMarked: false,
-            posX: 100,
-            posY: 400,
+            posX: 0,
+            posY: 0,
+            isClicked: false,
+
 
             // color: 'white'
         }
@@ -143,5 +146,17 @@ function getImg(imgId) {
 function createText(pos) {
     gText = {
         pos,
+    }
+}
+
+
+
+function toggleMenu() {
+    if (document.body.classList.contains('menu-open')) {
+        document.querySelector('.btn-menu').innerText = '☰'
+        document.body.classList.remove('menu-open')
+    } else {
+        document.body.classList.add('menu-open')
+        document.querySelector('.btn-menu').innerText = 'X'
     }
 }

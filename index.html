@@ -10,23 +10,23 @@
 </head>
 
 <body onload="init()">
-    <!-- <h1>Meme Generator!S</h1> -->
+    <div class="main-screen" onclick="toggleMenu()"></div>
 
-    <header class="header-container flex">
+    <header class="main-header flex space-around align-center">
         <div class="main-header-content main-layout">
-            <div class="logo">Memegen</div>
-            <nav id="mainMenu" class="main-menu-wrapper">
+            <div class="logo" onclick="renderGallery()">Memegen</div>
+            <div>
                 <ul class="main-nav clean-list flex">
                     <li><a href="#">Gallery</a></li>
                     <li><a href="#">Memes</a></li>
                     <li><a href="#">About</a></li>
                 </ul>
 
-            </nav>
-            <button class="toggle-menu-btn fa" onclick="toggleMenu()" alt="Open main menu">☰</button>
-            <div class="toggle-menu-screen screen" onclick="toggleMenu()" alt="toggle main menu"></div>
+            </div>
+            <button class="btn-menu" onclick="toggleMenu()">☰</button>
         </div>
     </header>
+
 
     <div class="image-gallery-container">
         <div class="gallery-control"></div>
@@ -39,7 +39,7 @@
         </div>
 
         <div class="control-box-container">
-            <input type="text" name="textLine" id="textLine" placeholder="Enter text line"
+            <input type="text" name="textLine" id="textLine" class="input-text" placeholder="Enter text line"
                 oninput="onChangeLineText(this.value)"><br>
             <div class="buttons">
                 <button class="btn-control btn-grad" onclick="onChangePosition(10)">⬇</button>
@@ -98,14 +98,43 @@
                 oninput="onChangeColorFill(this.value)">
             <section class="stickers-section">stickers</section>
             <section class="share-save-container">
-                <button class="share-save-btn">save</button>
-                <button class="share-save-btn">share</button>
-                <button class="share-save-btn">download</button>
+
+                <button class="share-save-btn" onclick="onSaveMeme()">save</button>
+
+                <button class="share-save-btn share-facebook">
+                    <a href="#" onclick="shareOnFacebook()" class="">share</a>
+                </button>
+
+                <button class="share-save-btn">
+                    <a href="#" onclick="downloadCanvas(this)" download="">Download</a>
+                </button>
+
             </section>
         </div>
     </div>
 
+    <footer class="footer main-footer flex align-center">
+        <h3 class="logo">Memegen by Noa Nissim</h3>
+        <div class="small-details">© 2021 - All Rights Reserved </div>
 
+        <div class="social">
+
+            <a href="https://github.com/noanissim" class="github icons" target="_blank">
+                <i class="fab fa-github"></i>
+            </a>
+
+            <a class="facebook icons" href="https://www.facebook.com/profile.php?id=100000469753848" target="_blank">
+                <i class="fa fa-facebook"></i>
+            </a>
+
+            <a class="linkedin icons" href="https://www.linkedin.com/in/noanissim/" target="_blank">
+                <i class="fa fa-linkedin"></i>
+            </a>
+
+
+        </div>
+
+    </footer>
 
 
 
