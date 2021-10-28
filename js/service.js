@@ -112,7 +112,7 @@ var gMeme = {
     height: 0,
 
     lines: [{
-            txt: 'aaa',
+            txt: 'Hello',
             size: 50,
             align: 'center',
             font: 'impact',
@@ -123,7 +123,7 @@ var gMeme = {
             isDrag: false
         },
         {
-            txt: 'bbb',
+            txt: 'World!',
             size: 50,
             align: 'center',
             font: 'impact',
