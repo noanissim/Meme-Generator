@@ -93,7 +93,6 @@ function renderFilterWords() {
 
 function openModal() {
     document.querySelector('.modal-about-content').hidden = false;
-    toggleMenu()
 }
 
 function closeModal() {

@@ -10,7 +10,7 @@ var gFiltersPopularity = [{
     {
         word: 'happy',
         count: 3,
-        size: 1.5
+        size: 1.0
 
     },
 
@@ -23,7 +23,7 @@ var gFiltersPopularity = [{
     {
         word: 'funny',
         count: 1,
-        size: 1.5
+        size: 2.0
 
     },
     {
@@ -35,13 +35,13 @@ var gFiltersPopularity = [{
     {
         word: 'animal',
         count: 2,
-        size: 1.5
+        size: 2.5
 
     },
     {
         word: 'akward',
         count: 0,
-        size: 1.5
+        size: 0.8
     },
 ]
 var gCurrFilter = 'all'
