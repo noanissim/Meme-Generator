@@ -499,12 +499,23 @@ var loadImg = function (event) {
         var dataURL = reader.result;
         var imageObj = new Image();
         imageObj.src = dataURL;
+
+        var newImg = {
+            id: gImgs.length + 1,
+            url: imageObj.src,
+            keywords: ['funny', 'happy']
+        }
+        gImgs.push(newImg)
         imageObj.onload = function () {
+            renderGallery()
             gCtx.drawImage(imageObj, 0, 0, gElCanvas.width, gElCanvas.height);
         }
-        convertImage(imageObj)
+
+
     }
-    reader.readAsDataURL(input.files[0]);
+    console.log(input.files[0]);
+    console.log(reader.readAsDataURL(input.files[0]))
+
 }
 
 
