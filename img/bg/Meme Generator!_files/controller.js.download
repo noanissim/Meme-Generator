@@ -10,7 +10,6 @@ var gRects = []
 var posTopRect
 var posBottomRect
 var posMiddleRect
-var gCurrImg
 var gIsDownload = false
 var gCurrAddedLine
 
@@ -51,67 +50,23 @@ function renderCanvas() {
             renderTextMiddle()
         }
     }
+
     gCtx.restore()
-}
-
-function toggleRects(btn) {
-    if (btn.innerText === 'REMOVE RECTS') {
-        gIsDownload = true
-        btn.innerText = 'ADD RECTS'
-        renderCanvas()
-        return
-    } else {
-        gIsDownload = false
-        btn.innerText = 'REMOVE RECTS'
-        renderCanvas()
-        return
-    }
-}
-
-function removeRects() {
-    gIsDownload = true
-    renderCanvas()
 }
 
 function renderGallery() {
     var strHtml = ''
-    var images = sendImgsToRender()
-    strHtml += images.map(function (img) {
+    strHtml += gImgs.map(function (img) {
         return `<img src="${img.url}" id="${img.id}" class="image-gallery" onclick="convertImage(this)">`
     }).join('')
     document.querySelector('.images-grid').innerHTML = strHtml;
-    renderFilterWords()
 }
 
-function renderFilterWords() {
-    var strHtml = ''
-    strHtml += gFiltersPopularity.map(function (wordObj) {
-        return `<li class="word-item" onclick="onSetWord(this)" style="font-size:${wordObj.size}rem;">${wordObj.word}</li>`
-    }).join('')
-    document.querySelector('.words-filter').innerHTML = strHtml;
-}
+// function renderEditor() {
+//     var strHtml = ''
+//     strHtml += ``
+// }
 
-function openModal() {
-    document.querySelector('.modal-about-content').hidden = false;
-    toggleMenu()
-}
-
-function closeModal() {
-    document.querySelector('.modal-about-content').hidden = true;
-}
-
-//****************************FILTER****************************************** */
-function onSetSearch(word) {
-    setFilter(word.value)
-    setSizeWordFilter()
-    renderGallery()
-}
-
-function onSetWord(word) {
-    setFilter(word.innerText.toLowerCase())
-    setSizeWordFilter()
-    renderGallery()
-}
 
 //**************************TOUCH EVENTS***************************************** */
 function addListeners() {
@@ -244,24 +199,6 @@ function onAddLine() {
 }
 
 
-function drawStickerOnCanvas(sticker) {
-    var elNewLine = {
-        txt: sticker,
-        size: gCtx.measureText(sticker).width * 4,
-        align: 'center',
-        font: 'impact',
-        isMarked: true,
-        posX: 80,
-        posY: 150,
-        isClicked: false,
-        isDrag: false
-    }
-    console.log(elNewLine);
-    gMeme.lines.push(elNewLine)
-    gMeme.selectedLineIdx = gMeme.lines.length - 1
-
-
-}
 
 
 //**************************RENDER-TEXT AND RECT********************************************* */
@@ -403,7 +340,6 @@ function isRectClicked(clickedPos) {
 function drawImgOnCanvas(src, width, height) {
     // document.querySelector('.meme-editor-container').hidden = true
     document.querySelector('.meme-editor-container').hidden = false
-    document.querySelector('.meme-editor-container').style.display = 'flex'
 
     var img = new Image()
     img.src = src
@@ -413,7 +349,6 @@ function drawImgOnCanvas(src, width, height) {
         gCtx.drawImage(img, 0, 0, gElCanvas.width, heightCanvas) //img,x,y,xend,yend
         renderCanvas()
         document.querySelector('.image-gallery-container').hidden = true
-        document.querySelector('.image-gallery-container').style.display = 'none'
 
     }
     // document.querySelector('.image-gallery-container').hidden = true
@@ -427,13 +362,12 @@ function drawImgOnCanvas(src, width, height) {
 }
 
 function convertImage(image) {
-    gCurrImg = image
+
     gCtx.clearRect(0, 0, gElCanvas.width, gElCanvas.height)
     var src = image.src
     var width = image.offsetWidth
     var height = image.offsetHeight
     gMeme.selectedImgId = image.id
-
     gMeme.src = src
     gMeme.width = width
     gMeme.height = height
@@ -456,14 +390,34 @@ function onChangePosition(value, valueX = 0) {
 
 
 //******************************IMAGE DOWNLOAD******************************
+function saveCanvasWithoutRects(elLink) {
+    gIsDownload = true
+    renderCanvas()
+    return elLink
+    // drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
+    // console.log('save here');
+    // setTimeout(function () {
+    //     gCtx.clearRect(0, 0, gElCanvas.offsetWidth, gElCanvas.offsetHeight)
+    //     renderTextTop()
+    //     renderTextBottom()
+    //     if (gMeme.lines.length > 2) {
+    //         renderTextMiddle()
+    //     }
+    // }, 0)
 
+}
 
 
 function downloadCanvas(elLink) {
-
-    const data = gElCanvas.toDataURL()
-    elLink.href = data
-    elLink.download = 'my-img.jpg'
+    alert('********  למתרגל/ת שלום ********* You have 10 seconds to download the photo in the correct way, async problem I couldnt figure out how to solve it, doesnt work with setTimeOut, PRESS DOWNLOAD AGAIN')
+    var link1 = saveCanvasWithoutRects(elLink)
+    var gCanvas = document.querySelector('canvas');
+    const data = gCanvas.toDataURL()
+    link1.href = data
+    link1.download = 'my-img.jpg'
+    setTimeout(function () {
+        gIsDownload = false
+    }, 10000)
 
 
 }
@@ -490,25 +444,6 @@ function renderImg(img) {
     gCtx.drawImage(img, 0, 0, gElCanvas.width, gElCanvas.height);
 }
 
-
-
-var loadImg = function (event) {
-    var input = event.target;
-    var reader = new FileReader();
-    reader.onload = function () {
-        var dataURL = reader.result;
-        var imageObj = new Image();
-        imageObj.src = dataURL;
-        imageObj.onload = function () {
-            gCtx.drawImage(imageObj, 0, 0, gElCanvas.width, gElCanvas.height);
-        }
-        convertImage(imageObj)
-    }
-    reader.readAsDataURL(input.files[0]);
-}
-
-
-
 var gImgsStorage
 
 function onSaveMeme() {
@@ -532,6 +467,7 @@ function loadFromStorageImg() {
 function onLoadImgFromStorage() {
     for (var i = 0; i < gImgsStorage.length; i++) {
         var dataURL = localStorage.getItem(gImgsStorage[i]);
+        console.log(dataURL);
         var img = new Image;
         img.src = dataURL;
 
@@ -540,25 +476,18 @@ function onLoadImgFromStorage() {
 
 }
 
-function onOpenMemesTab() {
-    onLoadImgFromStorage()
+function onOpemMemesTab() {
     document.querySelector('.save-img-container').hidden = false
-    document.querySelector('.save-img-container').style.display = 'flex'
     document.querySelector('.meme-editor-container').hidden = true
-    document.querySelector('.meme-editor-container').style.display = 'none'
     document.querySelector('.image-gallery-container').hidden = true
-    document.querySelector('.image-gallery-container').style.display = 'none'
     // console.log(document.querySelector('.saved-images'));
 }
 
 function onOpenGallery() {
     // document.querySelector('.image-gallery-container').classList.remove('hidden');
-    // document.querySelector('.image-gallery-container').hidden = false
-    document.querySelector('.image-gallery-container').style.display = 'flex'
+    document.querySelector('.image-gallery-container').hidden = false
     document.querySelector('.save-img-container').hidden = true
-    document.querySelector('.save-img-container').style.display = 'none'
     document.querySelector('.meme-editor-container').hidden = true
-    document.querySelector('.meme-editor-container').style.display = 'none'
 }
 
 function shareOnFacebook() {

@@ -1,10 +1,21 @@
 'use strict'
 
 function init() {
+
+
     renderGallery()
     initEditor()
-    document.querySelector('.meme-editor-container').classList.add('hidden');
-    document.querySelector('.image-gallery-container').classList.remove('hidden');
-    // document.querySelector('footer').classList.remove('hidden');
 
+    document.querySelector('.meme-editor-container').hidden = true
+    document.querySelector('.meme-editor-container').style.display = 'none'
+    document.querySelector('.image-gallery-container').hidden = false
+    document.querySelector('.meme-editor-container').hidden = true
+    document.querySelector('.meme-editor-container').style.display = 'none'
+    autocomplete(document.getElementById("myInput"), gFilters);
+}
+
+
+function initSaved() {
+    onOpenMemesTab()
+    document.querySelector('.save-img-container').hidden = false
 }

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- saved from url=(0023)http://127.0.0.1:5501/# -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator!</title>
+    <link rel="stylesheet" href="./Meme Generator!_files/main.css">
+</head>
+
+<body onload="init()" class="menu-open">
+    <div class="main-screen" onclick="toggleMenu()"></div>
+
+    <header class="main-header flex space-around align-center">
+        <div class="main-header-content main-layout">
+            <div class="logo" onclick="renderGallery()">Memegen</div>
+            <div>
+                <ul class="main-nav clean-list flex">
+                    <li><a href="http://127.0.0.1:5501/#" onclick="onOpenGallery()">Gallery</a></li>
+                    <li><a href="http://127.0.0.1:5501/#" onclick="onOpemMemesTab()">Memes</a></li>
+                    <li><a href="http://127.0.0.1:5501/#">About</a></li>
+                </ul>
+
+            </div>
+            <button class="btn-menu" onclick="toggleMenu()">X</button>
+        </div>
+    </header>
+
+
+    <div class="image-gallery-container" hidden="">
+        <div class="gallery-control"></div>
+        <div class="images-grid"><img src="./Meme Generator!_files/1.jpg" id="1" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/2.jpg" id="2" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/3.jpg" id="3" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/4.jpg" id="4" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/5.jpg" id="5" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/6.jpg" id="6" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/7.jpg" id="7" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/8.jpg" id="8" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/9.jpg" id="9" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/10.jpg" id="10" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/11.jpg" id="11" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/12.jpg" id="12" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/13.jpg" id="13" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/14.jpg" id="14" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/15.jpg" id="15" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/16.jpg" id="16" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/17.jpg" id="17" class="image-gallery" onclick="convertImage(this)"><img src="./Meme Generator!_files/18.jpg" id="18" class="image-gallery" onclick="convertImage(this)"></div>
+    </div>
+
+
+    <div class="meme-editor-container">
+        <div class="canvas-container">
+            <canvas width="500" height="500"></canvas>
+        </div>
+
+        <div class="control-box-container">
+            <input type="text" name="textLine" id="textLine" class="input-text" placeholder="Enter text line" oninput="onChangeLineText(this.value)"><br>
+            <div class="buttons">
+                <button class="btn-control btn-grad" onclick="onChangePosition(10)">⬇</button>
+                <button class="btn-control btn-grad" onclick="onChangePosition(-10)">⬆</button>
+                <button class="btn-control btn-grad" onclick="onChangeLineIdx()">⬆⬇</button>
+                <button class="btn-control btn-grad" onclick="onAddLine()">+</button>
+                <button class="btn-control btn-grad" onclick="onDeleteLine()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                        </path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </button>
+                <button class="btn-control btn-grad" onclick="onChangeFontSize(10)">A+</button>
+                <button class="btn-control btn-grad" onclick="onChangeFontSize(-10)">A-</button>
+
+                <button onclick="onChangeAlign(&#39;right&#39;)" class="btn-control btn-grad"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-left">
+                        <line x1="17" y1="10" x2="3" y2="10"></line>
+                        <line x1="21" y1="6" x2="3" y2="6"></line>
+                        <line x1="21" y1="14" x2="3" y2="14"></line>
+                        <line x1="17" y1="18" x2="3" y2="18"></line>
+                    </svg>
+                </button>
+                <button onclick="onChangeAlign(&#39;center&#39;)" class="btn-control btn-grad"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-justify">
+                        <line x1="21" y1="10" x2="3" y2="10"></line>
+                        <line x1="21" y1="6" x2="3" y2="6"></line>
+                        <line x1="21" y1="14" x2="3" y2="14"></line>
+                        <line x1="21" y1="18" x2="3" y2="18"></line>
+                    </svg>
+                </button>
+                <button onclick="onChangeAlign(&#39;left&#39;)" class="btn-control btn-grad"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-right">
+                        <line x1="21" y1="10" x2="7" y2="10"></line>
+                        <line x1="21" y1="6" x2="3" y2="6"></line>
+                        <line x1="21" y1="14" x2="3" y2="14"></line>
+                        <line x1="21" y1="18" x2="7" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <select name="changeFont" class="select-font" onchange="onSetFont(this.value)">
+                <option value="impact">Impact</option>
+                <option value="arial">Arial</option>
+                <option value="halvatice">Halvatice</option>
+            </select>
+            <label for="colorStroke">stroke</label>
+            <input class="btn-color" title="colorStroke" type="color" name="colorStroke" id="" value="#000000" oninput="onChangeColorStroke(this.value)">
+            <label for="colorFill">fill</label>
+            <input class="btn-color" title="colorFill" type="color" name="colorFill" id="" value="#ffffff" oninput="onChangeColorFill(this.value)">
+            <section class="stickers-section">stickers</section>
+            <section class="share-save-container">
+
+                <button class="share-save-btn" onclick="onSaveMeme()">save</button>
+
+                <button class="share-save-btn share-facebook">
+                    <a href="http://127.0.0.1:5501/#" onclick="shareOnFacebook()" class="">share</a>
+                </button>
+
+                <button class="share-save-btn">
+                    <a href="http://127.0.0.1:5501/#" onclick="downloadCanvas(this)" download="">Download</a>
+                </button>
+
+            </section>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="save-img-container" hidden="">
+        <div class="saved-images">
+        </div>
+    </div>
+
+    <footer class="footer main-footer flex align-center">
+        <h3 class="logo">Memegen by Noa Nissim</h3>
+        <div class="small-details">© 2021 - All Rights Reserved </div>
+
+        <div class="social">
+
+            <a href="https://github.com/noanissim" class="github icons" target="_blank">
+                <i class="fab fa-github"></i>
+            </a>
+
+            <a class="facebook icons" href="https://www.facebook.com/profile.php?id=100000469753848" target="_blank">
+                <i class="fa fa-facebook"></i>
+            </a>
+
+            <a class="linkedin icons" href="https://www.linkedin.com/in/noanissim/" target="_blank">
+                <i class="fa fa-linkedin"></i>
+            </a>
+
+
+        </div>
+
+    </footer>
+
+
+
+    <script src="./Meme Generator!_files/storage.js.download"></script>
+    <script src="./Meme Generator!_files/service.js.download"></script>
+    <script src="./Meme Generator!_files/controller.js.download"></script>
+    <script src="./Meme Generator!_files/main.js.download"></script>
+<!-- Code injected by live-server -->
+<script type="text/javascript">
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>
