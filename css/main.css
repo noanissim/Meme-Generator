@@ -1,5 +1,5 @@
-@import url("/css/gallery.css");
-@import url("/css/editor.css");
+@import "/css/gallery.css";
+@import "/css/editor.css";
 
 * {
     box-sizing: border-box;
