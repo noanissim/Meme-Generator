@@ -1,5 +1,5 @@
-@import "../css/gallery.css";
-@import "../css/editor.css";
+/* @import "../css/gallery.css"; */
+/* @import "../css/editor.css"; */
 
 * {
     box-sizing: border-box;
@@ -217,8 +217,259 @@ body.menu-open .main-screen {
         /*for the transition*/
 }
 
+/*images-gallery*/
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 5px;
+    cursor: pointer;
+    padding-bottom: 130px;
+
+}
 
 
+
+.image-gallery {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: contain;
+}
+
+
+.gallery-control {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-block: 20px;
+}
+
+.words-filter {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 1.5rem;
+
+}
+
+.word-item {
+    color: #4CB8C4;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+.word-item:hover {
+    color: #3dc2a1;
+    text-shadow: 0 0 10px rgb(167, 167, 167);
+
+}
+
+.search-input {
+    height: 30px;
+    border-radius: 7px;
+    margin: 0 10px 10px 5px;
+}
+
+.submit-btn {
+    background-image: linear-gradient(to right, #4CB8C4 0%, #7eccb9 51%, #4CB8C4 100%);
+    margin: 5px;
+    height: 35px;
+    padding: 5px;
+    width: fit-content;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.3s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+/*MEME-EDITOR*/
+.meme-editor-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.hidden {
+    display: none;
+}
+
+.input-text {
+    width: 250px;
+    height: 40px;
+    border-radius: 10px;
+
+}
+
+.input-text.focus,
+.search-input:focus {
+    background-color: lightgoldenrodyellow;
+    color: #1e1e1e;
+    font-size: larger;
+}
+
+/* .btn-control {} */
+.stickers-section {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: rgb(255, 221, 195);
+    border: #bbb3b3 1px solid;
+    margin: 10px auto;
+}
+
+
+img.sticker-small {
+    margin: 0;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+
+.select-font {
+    position: relative;
+    font-family: Arial;
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
+}
+
+
+
+
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    margin-top: 3px;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+
+
+.btn-grad {
+    background-image: linear-gradient(to right, #DD5E89 0%, #eca071 51%, #DD5E89 100%);
+    /* background-image: linear-gradient(to right, #4CB8C4 0%, #7eccb9 51%, #4CB8C4 100%); */
+    margin: 5px;
+    /* padding: 10px 10px; */
+    height: 40px;
+    width: fit-content;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.3s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 7px;
+    display: inline-block;
+    font-size: 1.4rem;
+    cursor: pointer;
+
+}
+
+.btn-grad:hover,
+.share-save-btn:hover {
+    background-position: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+
+
+.share-save-btn {
+    /* background-image: linear-gradient(to right, #bdadf1 0%, #fc948f 51%, #af9cee 100%); */
+    /* background-image: linear-gradient(to right, #757F9A 0%, #D7DDE8 51%, #757F9A 100%); */
+    background-image: linear-gradient(to right, #4CB8C4 0%, #7eccb9 51%, #4CB8C4 100%);
+    margin: 5px;
+    /* padding: 10px 10px; */
+    height: 40px;
+    width: fit-content;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.3s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 7px;
+    border: #585656 1px solid;
+    display: inline-block;
+    font-size: 1.4rem;
+    cursor: pointer;
+
+}
+
+.share-save-btn>a {
+    text-decoration: none;
+    color: white;
+}
+
+.share-save-container {
+    width: 100%;
+    margin: 10px auto;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.file-input {
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+    max-width: 250px
+}
 
 
 
