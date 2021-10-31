@@ -17,11 +17,10 @@
             <div class="logo" onclick="renderGallery()">Memegen</div>
             <div>
                 <ul class="main-nav clean-list flex">
-                    <li><a href="">Gallery</a></li>
-                    <li><a href="/saved.html" target="_blank" style="cursor: not-allowed;">Memes</a></li>
+                    <li><a href="#" onclick="renderGallery()">Gallery</a></li>
+                    <li><a href="#" onclick="onOpenMemesTab()">Memes</a></li>
                     <li><a href="#" onclick="openModal()">About</a></li>
                 </ul>
-
             </div>
             <button class="btn-menu" onclick="toggleMenu()">☰</button>
         </div>
@@ -31,169 +30,180 @@
         <div class="modal-about-content modal" hidden>
             <button onclick="closeModal()">X</button>
             <h1>Meme Generator website</h1>
-            <p>Flow is simple: User selects an image, adds some text and downloads the picture to
-                his device.
-                The app has two main UI areas: Image-Gallery and Meme-Editor (both are
-                implemented on the same web-page)</p>
+            <p>Flow is simple: User selects an image, adds some text and downloads the picture to his device. The app
+                has two main UI areas: Image-Gallery and Meme-Editor (both are implemented on the same web-page)</p>
         </div>
     </div>
 
-    <div class="image-gallery-container" hidden>
+    <div class="image-gallery-container">
         <div class="gallery-control">
-            <div class="autocomplete">
-                <input id="myInput" type="search" name="search-input" class="search-input"
-                    placeholder="Enter filter word" onchange="onSetSearch(this)">
-                <input type="submit" class="submit-btn">
-            </div>
+            <input list="filter-words" id="seach-input" type="search" name="search-input" class="search-input"
+                placeholder="Enter filter word" onchange="onSetSearch(this)">
+            <datalist id="filter-words">
+                <option value="all"></option>
+                <option value="happy"></option>
+                <option value="sad"></option>
+                <option value="funny"></option>
+                <option value="cute"></option>
+                <option value="animal"></option>
+                <option value="akward"></option>
+            </datalist>
+
             <div>
-                <ul class="clean-list words-filter">
-                </ul>
-            </div>
-        </div>
-        <div class="images-grid">
-            <!-- <canvas class="canvas2" width="100" height="100"></canvas> -->
-
-        </div>
-    </div>
-
-
-    <div class="meme-editor-container">
-        <div class="canvas-container">
-            <canvas id="canvas-01" width="500" height="500"></canvas>
-        </div>
-
-        <div class="control-box-container">
-            <input type="text" name="textLine" id="textLine" class="input-text" placeholder="Enter text line"
-                oninput="onChangeLineText(this.value)"><br>
-            <div class="buttons">
-                <button class="btn-control btn-grad" onclick="onChangePosition(10)">⬇</button>
-                <button class="btn-control btn-grad" onclick="onChangePosition(-10)">⬆</button>
-                <button class="btn-control btn-grad" onclick="onChangeLineIdx()">⬆⬇</button>
-                <button class="btn-control btn-grad" onclick="onAddLine()">+</button>
-                <button class="btn-control btn-grad" onclick="onDeleteLine()"><svg xmlns="http://www.w3.org/2000/svg"
-                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                        </path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                </button>
-                <button class="btn-control btn-grad" onclick="onChangeFontSize(10)">A+</button>
-                <button class="btn-control btn-grad" onclick="onChangeFontSize(-10)">A-</button>
-
-                <button onclick="onChangeAlign('right')" class="btn-control btn-grad"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-align-left">
-                        <line x1="17" y1="10" x2="3" y2="10"></line>
-                        <line x1="21" y1="6" x2="3" y2="6"></line>
-                        <line x1="21" y1="14" x2="3" y2="14"></line>
-                        <line x1="17" y1="18" x2="3" y2="18"></line>
-                    </svg>
-                </button>
-                <button onclick="onChangeAlign('center')" class="btn-control btn-grad"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-align-justify">
-                        <line x1="21" y1="10" x2="3" y2="10"></line>
-                        <line x1="21" y1="6" x2="3" y2="6"></line>
-                        <line x1="21" y1="14" x2="3" y2="14"></line>
-                        <line x1="21" y1="18" x2="3" y2="18"></line>
-                    </svg>
-                </button>
-                <button onclick="onChangeAlign('left')" class="btn-control btn-grad"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-align-right">
-                        <line x1="21" y1="10" x2="7" y2="10"></line>
-                        <line x1="21" y1="6" x2="3" y2="6"></line>
-                        <line x1="21" y1="14" x2="3" y2="14"></line>
-                        <line x1="21" y1="18" x2="7" y2="18"></line>
-                    </svg>
-                </button>
+                <ul class="clean-list words-filter"> </ul>
+                <div class="images-grid"></div>
             </div>
 
-            <select name="changeFont" class="select-font" onchange="onSetFont(this.value)">
-                <option value="impact">Impact</option>
-                <option value="arial">Arial</option>
-                <option value="halvatice">Halvatice</option>
-            </select>
-            <label for="colorStroke">stroke</label>
-            <input class="btn-color" title="colorStroke" type="color" name="colorStroke" id="" value="#000000"
-                oninput="onChangeColorStroke(this.value)">
-            <label for="colorFill">fill</label>
-            <input class="btn-color" title="colorFill" type="color" name="colorFill" id="" value="#ffffff"
-                oninput="onChangeColorFill(this.value)">
-            <section class="stickers-section">
-                <img src="img/stickers/2.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😍')">
-                <img src="img/stickers/3.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😎')">
-                <img src="img/stickers/4.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😂')">
-                <img src="img/stickers/5.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😜')">
-                <img src="img/stickers/6.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😭')">
-                <img src="img/stickers/7.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😱')">
-                <img src="img/stickers/8.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('👍🏻')">
-                <img src="img/stickers/9.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('❤️')">
-                <img src="img/stickers/10.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('🕶️')">
-                <img src="img/stickers/11.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('🎩')">
-                <img src="img/stickers/12.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('🌸')">
-            </section>
-            <section class="share-save-container">
-                <button class="share-save-btn" onclick="toggleRects(this)">remove rects</button>
-                <button class="share-save-btn" onclick="onSaveMeme()">save</button>
+            <div class="meme-editor-container hidden">
+                <div class="canvas-container">
+                    <canvas id="canvas-01" width="500" height="500"></canvas>
+                </div>
+                <div class="control-box-container">
+                    <input type="text" name="textLine" id="textLine" class="input-text" placeholder="Enter text line"
+                        oninput="onChangeLineText(this.value)"><br>
+                    <div class="buttons">
+                        <button class="btn-control btn-grad" onclick="onChangePosition(10)">⬇</button>
+                        <button class="btn-control btn-grad" onclick="onChangePosition(-10)">⬆</button>
+                        <button class="btn-control btn-grad" onclick="onChangeLineIdx()">⬆⬇</button>
+                        <button class="btn-control btn-grad" onclick="onAddLine()">+</button>
+                        <button class="btn-control btn-grad" onclick="onDeleteLine()"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-trash-2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </button>
+                        <button class="btn-control btn-grad" onclick="onChangeFontSize(10)">A+</button>
+                        <button class="btn-control btn-grad" onclick="onChangeFontSize(-10)">A-</button>
 
-                <button class="share-save-btn share-facebook">
-                    <a href="#" onclick="shareOnFacebook()" class="">share</a>
-                </button>
+                        <button onclick="onChangeAlign('right')" class="btn-control btn-grad"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-align-left">
+                                <line x1="17" y1="10" x2="3" y2="10"></line>
+                                <line x1="21" y1="6" x2="3" y2="6"></line>
+                                <line x1="21" y1="14" x2="3" y2="14"></line>
+                                <line x1="17" y1="18" x2="3" y2="18"></line>
+                            </svg>
+                        </button>
+                        <button onclick="onChangeAlign('center')" class="btn-control btn-grad"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-align-justify">
+                                <line x1="21" y1="10" x2="3" y2="10"></line>
+                                <line x1="21" y1="6" x2="3" y2="6"></line>
+                                <line x1="21" y1="14" x2="3" y2="14"></line>
+                                <line x1="21" y1="18" x2="3" y2="18"></line>
+                            </svg>
+                        </button>
+                        <button onclick="onChangeAlign('left')" class="btn-control btn-grad"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-align-right">
+                                <line x1="21" y1="10" x2="7" y2="10"></line>
+                                <line x1="21" y1="6" x2="3" y2="6"></line>
+                                <line x1="21" y1="14" x2="3" y2="14"></line>
+                                <line x1="21" y1="18" x2="7" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
 
-                <button class="share-save-btn">
-                    <a href="#" onclick="downloadCanvas(this)" download="">Download</a>
-                </button>
-                <br><br>
-                <input type="file" class="file-input share-save-btn" name="image" onchange="loadImg(event)" />
-            </section>
-        </div>
+                    <select name="changeFont" class="select-font" onchange="onSetFont(this.value)">
+                        <option value="impact">Impact</option>
+                        <option value="arial">Arial</option>
+                        <option value="halvatice">Halvatice</option>
+                    </select>
+                    <label for="colorStroke">stroke</label>
+                    <input class="btn-color" title="colorStroke" type="color" name="colorStroke" id="" value="#000000"
+                        oninput="onChangeColorStroke(this.value)">
+                    <label for="colorFill">fill</label>
+                    <input class="btn-color" title="colorFill" type="color" name="colorFill" id="" value="#ffffff"
+                        oninput="onChangeColorFill(this.value)">
+                    <section class="stickers-section">
+                        <img src="img/stickers/2.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😍')">
+                        <img src="img/stickers/3.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😎')">
+                        <img src="img/stickers/4.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😂')">
+                        <img src="img/stickers/5.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😜')">
+                        <img src="img/stickers/6.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😭')">
+                        <img src="img/stickers/7.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('😱')">
+                        <img src="img/stickers/8.png" alt="" class="sticker-small"
+                            onclick="drawStickerOnCanvas('👍🏻')">
+                        <img src="img/stickers/9.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('❤️')">
+                        <img src="img/stickers/10.png" alt="" class="sticker-small"
+                            onclick="drawStickerOnCanvas('🕶️')">
+                        <img src="img/stickers/11.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('🎩')">
+                        <img src="img/stickers/12.png" alt="" class="sticker-small" onclick="drawStickerOnCanvas('🌸')">
+                        <img src="img/stickers/13.png" class="sticker-small" onclick="onStickerClick(this)">
+                        <img src="img/stickers/14.png" class="sticker-small" onclick="onStickerClick(this)">
+                        <img src="img/stickers/15.png" class="sticker-small" onclick="onStickerClick(this)">
+                        <img src="img/stickers/16.png" class="sticker-small" onclick="onStickerClick(this)">
+                        <img src="img/stickers/17.png" class="sticker-small" onclick="onStickerClick(this)">
+                        <img src="img/stickers/18.png" class="sticker-small" onclick="onStickerClick(this)">
+                    </section>
+                    <section class="share-save-container">
+                        <button class="share-save-btn" onclick="toggleRects(this)">remove rects</button>
+                        <button class="share-save-btn" onclick="onSaveMeme()">save</button>
+
+                        <button class="share-save-btn share-facebook">
+                            <a href="#" onclick="shareOnFacebook()" class="">share</a>
+                        </button>
+
+                        <button class="share-save-btn">
+                            <a href="#" onclick="downloadCanvas(this)" download="">Download</a>
+                        </button>
+                        <br><br>
+                        <!-- <input type="file" class="file-input share-save-btn" name="image" onchange="loadImg(event)" /> -->
+                        <input type="file" class="file-input share-save-btn" name="image"
+                            onchange="onImgInput(event)" />
+                        <div class="share-container"></div>
+                    </section>
+                </div>
 
 
-    </div>
+            </div>
 
-    <div class="save-img-container">
-        <div class="saved-images">
-        </div>
-    </div>
+            <div class="save-img-container hidden">
+                <div class="saved-images">
+                </div>
+            </div>
 
+            <footer class="footer main-footer flex align-center">
+                <h3 class="logo">Memegen by Noa Nissim</h3>
+                <div class="small-details">© 2021 - All Rights Reserved </div>
 
+                <div class="social">
 
-    <footer class="footer main-footer flex align-center">
-        <h3 class="logo">Memegen by Noa Nissim</h3>
-        <div class="small-details">© 2021 - All Rights Reserved </div>
+                    <a href="https://github.com/noanissim" class="github icons" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
 
-        <div class="social">
+                    <a class="facebook icons" href="https://www.facebook.com/profile.php?id=100000469753848"
+                        target="_blank">
+                        <i class="fa fa-facebook"></i>
+                    </a>
 
-            <a href="https://github.com/noanissim" class="github icons" target="_blank">
-                <i class="fab fa-github"></i>
-            </a>
-
-            <a class="facebook icons" href="https://www.facebook.com/profile.php?id=100000469753848" target="_blank">
-                <i class="fa fa-facebook"></i>
-            </a>
-
-            <a class="linkedin icons" href="https://www.linkedin.com/in/noanissim/" target="_blank">
-                <i class="fa fa-linkedin"></i>
-            </a>
-
-
-        </div>
-
-    </footer>
+                    <a class="linkedin icons" href="https://www.linkedin.com/in/noanissim/" target="_blank">
+                        <i class="fa fa-linkedin"></i>
+                    </a>
 
 
+                </div>
 
-    <script src="js/storage.js"></script>
-    <script src="js/service.js"></script>
-    <script src="js/controller.js"></script>
-    <script src="js/main.js"></script>
+            </footer>
+
+
+
+            <script src="js/service/storage-service.js"></script>
+            <script src="js/service/gallery-service.js"></script>
+            <script src="js/service/editor-service.js"></script>
+            <script src="js/service/saved-service.js"></script>
+            <script src="js/controller.js"></script>
+            <script src="js/main.js"></script>
 </body>
 
 </html>

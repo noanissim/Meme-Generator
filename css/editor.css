@@ -1,0 +1,143 @@
+/*MEME-EDITOR*/
+.meme-editor-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.hidden {
+    display: none;
+}
+
+.input-text {
+    width: 250px;
+    height: 40px;
+    border-radius: 10px;
+
+}
+
+.input-text.focus,
+.search-input:focus {
+    background-color: lightgoldenrodyellow;
+    color: #1e1e1e;
+    font-size: larger;
+}
+
+/* .btn-control {} */
+.stickers-section {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: rgb(255, 221, 195);
+    border: #bbb3b3 1px solid;
+    margin: 10px auto;
+}
+
+
+img.sticker-small {
+    margin: 0;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+
+.select-font {
+    position: relative;
+    font-family: Arial;
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
+}
+
+
+
+
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    margin-top: 3px;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+
+
+.btn-grad {
+    background-image: linear-gradient(to right, #DD5E89 0%, #eca071 51%, #DD5E89 100%);
+    /* background-image: linear-gradient(to right, #4CB8C4 0%, #7eccb9 51%, #4CB8C4 100%); */
+    margin: 5px;
+    /* padding: 10px 10px; */
+    height: 40px;
+    width: fit-content;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.3s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 7px;
+    display: inline-block;
+    font-size: 1.4rem;
+    cursor: pointer;
+
+}
+
+.btn-grad:hover,
+.share-save-btn:hover {
+    background-position: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+
+
+.share-save-btn {
+    /* background-image: linear-gradient(to right, #bdadf1 0%, #fc948f 51%, #af9cee 100%); */
+    /* background-image: linear-gradient(to right, #757F9A 0%, #D7DDE8 51%, #757F9A 100%); */
+    background-image: linear-gradient(to right, #4CB8C4 0%, #7eccb9 51%, #4CB8C4 100%);
+    margin: 5px;
+    /* padding: 10px 10px; */
+    height: 40px;
+    width: fit-content;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.3s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 7px;
+    border: #585656 1px solid;
+    display: inline-block;
+    font-size: 1.4rem;
+    cursor: pointer;
+
+}
+
+.share-save-btn>a {
+    text-decoration: none;
+    color: white;
+}
+
+.share-save-container {
+    width: 100%;
+    margin: 10px auto;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.file-input {
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+    max-width: 250px
+}

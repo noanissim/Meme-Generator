@@ -13,6 +13,8 @@ var posMiddleRect
 var gCurrImg
 var gIsDownload = false
 var gCurrAddedLine
+var gImgsStorage
+
 
 const gTouchEvs = ['touchstart', 'touchmove', 'touchend']
 
@@ -21,9 +23,9 @@ function initEditor() {
     gElCanvas = document.querySelector('canvas')
     gCtx = gElCanvas.getContext('2d')
 
-    addListeners() //adds the mouse,touch,resize listeners
-    resizeCanvas() //resizes the canvas on init
-    renderCanvas() //render the canvas-empty!
+    addListeners()
+    resizeCanvas()
+    renderCanvas()
 }
 
 
@@ -51,7 +53,21 @@ function renderCanvas() {
             renderTextMiddle()
         }
     }
+    renderStickers()
     gCtx.restore()
+}
+
+function renderStickers() {
+    gMeme.stickers.forEach(function (sticker) {
+        var img = new Image()
+        img.src = sticker.src
+        img.onload = gCtx.drawImage(img, sticker.posX, sticker.posY, 100, 100)
+    })
+}
+
+function onStickerClick(stickerImg) {
+    addSticker(stickerImg)
+    renderStickers()
 }
 
 function toggleRects(btn) {
@@ -68,19 +84,16 @@ function toggleRects(btn) {
     }
 }
 
-function removeRects() {
-    gIsDownload = true
-    renderCanvas()
-}
-
 function renderGallery() {
     var strHtml = ''
-    var images = sendImgsToRender()
+    var images = getImgsToRender()
+    // console.log(images);
     strHtml += images.map(function (img) {
-        return `<img src="${img.url}" id="${img.id}" class="image-gallery" onclick="convertImage(this)">`
+        return `<img src="${img.url}" id="${img.id}" class="image-gallery" onclick="onSelectImage(this)">`
     }).join('')
     document.querySelector('.images-grid').innerHTML = strHtml;
     renderFilterWords()
+    onOpenGallery()
 }
 
 function renderFilterWords() {
@@ -99,6 +112,7 @@ function closeModal() {
     document.querySelector('.modal-about-content').hidden = true;
 }
 
+
 //****************************FILTER****************************************** */
 function onSetSearch(word) {
     setFilter(word.value)
@@ -111,6 +125,7 @@ function onSetWord(word) {
     setSizeWordFilter()
     renderGallery()
 }
+
 
 //**************************TOUCH EVENTS***************************************** */
 function addListeners() {
@@ -137,19 +152,21 @@ function addTouchListeners() {
 //***the resize caused me a lot of bugs, so I didnt used it, i did manually resize canvas in css by media queries */
 function resizeCanvas() {
     // elContainer = document.querySelector('.canvas-container')
-    // if(elContainer.offsetWidth )
     // gElCanvas.width = elContainer.offsetWidth
     // gElCanvas.height = elContainer.offsetHeight
 }
 
-
-
 function onDown(ev) {
     const pos = getEvPos(ev)
-    if (!isRectClicked(pos)) {
+    if (!isRectClicked(pos) && !isStickerClicked(pos)) {
         document.querySelector('.input-text').classList.remove('focus');
         document.querySelector('.input-text').value = ''
         return
+    }
+    if (isStickerClicked(pos) && !isRectClicked(pos)) {
+        setStickerisDrag(true)
+        gStartPos = pos
+        document.body.style.cursor = 'grabbing'
     }
     setRectisDrag(true)
     gStartPos = pos
@@ -159,20 +176,12 @@ function onDown(ev) {
 }
 
 function onMove(ev) {
-    if (gMeme.lines[gMeme.selectedLineIdx].isDrag) {
-        const pos = getEvPos(ev)
-        const dx = pos.x - gStartPos.x
-        const dy = pos.y - gStartPos.y
-        gMeme.lines[gMeme.selectedLineIdx].posX += dx
-        gMeme.lines[gMeme.selectedLineIdx].posY += dy
-        gStartPos = pos
-        moveRect(dx, dy)
-        renderCanvas()
-    }
+    handleMove(ev)
+
 }
 
 function onUp() {
-    setRectisDrag(false)
+    handleUp()
     document.body.style.cursor = 'grab'
 }
 
@@ -196,12 +205,11 @@ function getEvPos(ev) {
 
 //****************************EDITOR-BUTTONS************************************* */
 function onChangeColorStroke(color) {
-    if (color !== '#000000') gColorStroke = color
+    changeColorStroke(color)
 }
 
 function onChangeColorFill(color) {
-    if (color !== '#ffffff') gColorFill = color
-
+    changeColorFill(color)
 }
 
 function onSetFont(font) {
@@ -209,15 +217,14 @@ function onSetFont(font) {
 }
 
 function onChangeAlign(value) {
-    gMeme.lines[gMeme.selectedLineIdx].align = value
+    changeAlign(value)
 }
+
 
 //***deleting lines caused bugs(the render tries to render something that doesnt exist so setting the deleted items offset was my solution to this bug) */
 function onDeleteLine() {
-    gMeme.lines[gMeme.selectedLineIdx].posX = 600
-    gMeme.lines[gMeme.selectedLineIdx].posY = 600
+    deleteLine()
 }
-
 
 
 //*******************************ADDING LINES******************************************* */
@@ -225,67 +232,44 @@ function onAddLine() {
     // var newLine = prompt('Enter the new line')
     document.querySelector('.input-text').classList.add('focus');
     var newText = document.querySelector('.input-text').value;
-    console.log(newText);
-    var elNewLine = {
-        txt: newText,
-        size: 50,
-        align: 'center',
-        font: 'impact',
-        isMarked: true,
-        posX: 100,
-        posY: 180,
-        isClicked: false,
-        isDrag: false
-    }
-    gMeme.lines.push(elNewLine)
-    gMeme.selectedLineIdx = gMeme.lines.length - 1
-    onChangeLineText(newText)
+    addNewLine(newText)
+    renderCanvas()
 }
 
-
 function drawStickerOnCanvas(sticker) {
-    var elNewLine = {
-        txt: sticker,
-        size: gCtx.measureText(sticker).width * 4,
-        align: 'center',
-        font: 'impact',
-        isMarked: true,
-        posX: 80,
-        posY: 150,
-        isClicked: false,
-        isDrag: false
-    }
-    console.log(elNewLine);
-    gMeme.lines.push(elNewLine)
-    gMeme.selectedLineIdx = gMeme.lines.length - 1
-
-
+    addStickerToCanvas(sticker)
 }
 
 
 //**************************RENDER-TEXT AND RECT********************************************* */
 function renderTextTop() {
-    var posTop = {
-        x: gMeme.lines[0].posX + 150,
-        y: gMeme.lines[0].posY + 40
-    }
+    var posTop = getTextTopPosition()
     drawText(posTop.x, posTop.y, 0)
 }
 
 function renderTextBottom() {
-    var posBottom = {
-        x: gMeme.lines[1].posX + 150,
-        y: gMeme.lines[1].posY + 40
-    }
+    var posBottom = getTextBottomPosition()
     drawText(posBottom.x, posBottom.y, 1)
 }
 
 function renderTextMiddle() {
-    var posMiddle = {
-        x: gMeme.lines[gCurrAddedLine].posX + 150 + gMeme.lines.length,
-        y: gMeme.lines[gCurrAddedLine].posY + 40 + gMeme.lines.length
-    }
+    var posMiddle = getTextMiddlePosition()
     drawText(posMiddle.x, posMiddle.y, gCurrAddedLine)
+}
+
+function renderRectTop() {
+    posTopRect = getRectTopPosition()
+    drawRect(posTopRect.x, posTopRect.y, 0)
+}
+
+function renderRectMiddle() {
+    posMiddleRect = getRectMiddlePosition()
+    drawRect(posMiddleRect.x, posMiddleRect.y, gCurrAddedLine)
+}
+
+function renderRectBottom() {
+    posBottomRect = getRectBottomPosition()
+    drawRect(posBottomRect.x, posBottomRect.y, 1)
 }
 
 function drawText(x, y, idx) {
@@ -300,32 +284,6 @@ function drawText(x, y, idx) {
     gCtx.strokeText(text, x, y);
 }
 
-
-function renderRectTop() {
-    posTopRect = {
-        x: gMeme.lines[0].posX,
-        y: gMeme.lines[0].posY
-    }
-    drawRect(posTopRect.x, posTopRect.y, 0)
-}
-
-function renderRectMiddle() {
-    posMiddleRect = {
-        x: gMeme.lines[gCurrAddedLine].posX + gMeme.lines.length,
-        y: gMeme.lines[gCurrAddedLine].posY + gMeme.lines.length
-    }
-    drawRect(posMiddleRect.x, posMiddleRect.y, gCurrAddedLine)
-}
-
-
-function renderRectBottom() {
-    posBottomRect = {
-        x: gMeme.lines[1].posX,
-        y: gMeme.lines[1].posY
-    }
-    drawRect(posBottomRect.x, posBottomRect.y, 1)
-}
-
 function drawRect(x, y, idx) {
     gCtx.beginPath();
     gCtx.lineWidth = 2;
@@ -338,72 +296,33 @@ function drawRect(x, y, idx) {
 }
 
 
-
 //*************************MORE FUNCTIONS CANVAS RELATED******************************************** */
 function onChangeLineIdx() {
     document.querySelector('.input-text').value = ''
-
-    gMeme.selectedLineIdx++
-    if (gMeme.selectedLineIdx > gMeme.lines.length - 1) gMeme.selectedLineIdx = 0
-    // console.log(gMeme.selectedLineIdx);
-    MarkCurrRect(gMeme.selectedLineIdx)
+    changeLineIdx()
 }
 
 function onChangeLineText(newText) {
-    var idx = gMeme.selectedLineIdx
-    gMeme.lines[idx].txt = newText
-    drawImgOnCanvas(gMeme.src, gMeme.width, gMeme.height)
-
+    changeLineText(newText)
+    renderCanvas()
 }
 
 function MarkCurrRect(lineIdx) {
-    for (var i = 0; i < gMeme.lines.length; i++) {
-        gMeme.lines[i].isMarked = (lineIdx === i)
-    }
+    doMarlCurrRect(lineIdx)
     renderCanvas()
 }
-
-
 
 function isRectClicked(clickedPos) {
-    for (var i = 0; i < gMeme.lines.length; i++) {
-        var posX = gMeme.lines[i].posX
-        var posY = gMeme.lines[i].posY
-
-        if (gElCanvas.offsetWidth >= 500) {
-            if (clickedPos.x >= posX && clickedPos.x <= posX + 300 && clickedPos.y >= posY && clickedPos.y <= posY + 50) {
-                gMeme.selectedLineIdx = i
-                gMeme.lines[i].isClicked = true
-                gMeme.lines[i].isMarked = true
-                return true
-            } else {
-                gMeme.lines[i].isClicked = false
-                gMeme.lines[i].isMarked = false
-            }
-        } else {
-            if (clickedPos.x >= posX * 0.6 && clickedPos.x <= posX * 0.6 + 300 * 0.6 && clickedPos.y >= posY * 0.6 && clickedPos.y <= posY * 0.6 + 50 * 0.6) {
-                gMeme.selectedLineIdx = i
-                gMeme.lines[i].isClicked = true
-                gMeme.lines[i].isMarked = true
-                return true
-            } else {
-                gMeme.lines[i].isClicked = false
-                gMeme.lines[i].isMarked = false
-            }
-        }
-
-    }
-    renderCanvas()
+    return checkIsRectClicked(clickedPos)
 }
 
+function isStickerClicked(clickedPos) {
+    return checkIsStickerClicked(clickedPos)
+}
 
 
 //*********************************DRAW IMAGE ON CANVAS*******************************
 function drawImgOnCanvas(src, width, height) {
-    // document.querySelector('.meme-editor-container').hidden = true
-    document.querySelector('.meme-editor-container').hidden = false
-    document.querySelector('.meme-editor-container').style.display = 'flex'
-
     var img = new Image()
     img.src = src
     var heightCanvas = (height * gElCanvas.width) / width
@@ -412,43 +331,23 @@ function drawImgOnCanvas(src, width, height) {
         gCtx.drawImage(img, 0, 0, gElCanvas.width, heightCanvas) //img,x,y,xend,yend
         renderCanvas()
         document.querySelector('.image-gallery-container').hidden = true
-        document.querySelector('.image-gallery-container').style.display = 'none'
-
+        // document.querySelector('.image-gallery-container').style.display = 'none'
     }
-    // document.querySelector('.image-gallery-container').hidden = true
-    // document.querySelector('.save-ig-container').hidden = true
-    // document.querySelector('.save-ig-container').hidden = true
-
-    // document.querySelector('.meme-editor-container').style.display = 'flex'
-
-    // document.querySelector('.image-gallery-container').style.display = 'none'
-
 }
 
-function convertImage(image) {
-    gCurrImg = image
-    gCtx.clearRect(0, 0, gElCanvas.width, gElCanvas.height)
-    var src = image.src
-    var width = image.offsetWidth
-    var height = image.offsetHeight
-    gMeme.selectedImgId = image.id
-
-    gMeme.src = src
-    gMeme.width = width
-    gMeme.height = height
-    drawImgOnCanvas(src, width, height)
+function onSelectImage(image) {
+    selectImage(image)
+    onOpenEditor()
 }
-
 
 
 //*****************************Arrows-buttons********************************************** */
 function onChangeFontSize(value) {
-    gMeme.lines[gMeme.selectedLineIdx].size += value
+    changeFontSize(value)
 }
 
 function onChangePosition(value, valueX = 0) {
-    gMeme.lines[gMeme.selectedLineIdx].posY += value
-    gMeme.lines[gMeme.selectedLineIdx].posX += valueX
+    changePosition(value, valueX = 0)
     renderCanvas()
 
 }
@@ -456,15 +355,10 @@ function onChangePosition(value, valueX = 0) {
 
 //******************************IMAGE DOWNLOAD******************************
 
-
-
 function downloadCanvas(elLink) {
-
     const data = gElCanvas.toDataURL()
     elLink.href = data
     elLink.download = 'my-img.jpg'
-
-
 }
 
 
@@ -481,6 +375,15 @@ function loadImageFromInput(ev, onImageReady) {
         var img = new Image()
         img.onload = onImageReady.bind(null, img)
         img.src = event.target.result //event.target.result=the url
+
+        var newImg = {
+            id: gImgs.length + 1,
+            url: img.src,
+            keywords: ['funny', 'happy']
+        }
+        gImgs.push(newImg)
+        gMeme.src = img.src
+        console.log(gImgs);
     }
     reader.readAsDataURL(ev.target.files[0]) //translate the url
 }
@@ -489,92 +392,49 @@ function renderImg(img) {
     gCtx.drawImage(img, 0, 0, gElCanvas.width, gElCanvas.height);
 }
 
-
-
-var loadImg = function (event) {
-    var input = event.target;
-    var reader = new FileReader();
-    reader.onload = function () {
-        var dataURL = reader.result;
-        var imageObj = new Image();
-        imageObj.src = dataURL;
-
-        var newImg = {
-            id: gImgs.length + 1,
-            url: imageObj.src,
-            keywords: ['funny', 'happy']
-        }
-        gImgs.push(newImg)
-        imageObj.onload = function () {
-            renderGallery()
-            gCtx.drawImage(imageObj, 0, 0, gElCanvas.width, gElCanvas.height);
-        }
-
-
-    }
-    console.log(input.files[0]);
-    console.log(reader.readAsDataURL(input.files[0]))
-
-}
-
-
-
-var gImgsStorage
-
 function onSaveMeme() {
     var gCanvas = document.querySelector('canvas');
-    var photo = 'img' + gMeme.selectedImgId
-    localStorage.setItem(photo, gCanvas.toDataURL());
-    loadFromStorageImg()
-    gImgsStorage.push(photo)
-    saveToStorage('gImgsStorage', gImgsStorage)
-    onLoadImgFromStorage()
+    saveMeme(gCanvas)
 }
 
 function loadFromStorageImg() {
-    if (!localStorage.getItem('gImgsStorage')) {
-        gImgsStorage = []
-        saveToStorage('gImgsStorage', gImgsStorage)
-    }
-    gImgsStorage = loadFromStorage('gImgsStorage')
+    doLoadFromStorage()
 }
 
-function onLoadImgFromStorage() {
+function onRenderSavedMemes() {
+    var strHtml = ''
     for (var i = 0; i < gImgsStorage.length; i++) {
         var dataURL = localStorage.getItem(gImgsStorage[i]);
         var img = new Image;
         img.src = dataURL;
-
-        document.querySelector('.saved-images').innerHTML += `<img src="${dataURL}" class="save-img">`;
+        strHtml += `<img src="${dataURL}" class="save-img">`;
     }
-
+    document.querySelector('.saved-images').innerHTML = strHtml
 }
 
 function onOpenMemesTab() {
-    onLoadImgFromStorage()
-    document.querySelector('.save-img-container').hidden = false
-    document.querySelector('.save-img-container').style.display = 'flex'
-    document.querySelector('.meme-editor-container').hidden = true
-    document.querySelector('.meme-editor-container').style.display = 'none'
-    document.querySelector('.image-gallery-container').hidden = true
-    document.querySelector('.image-gallery-container').style.display = 'none'
-    // console.log(document.querySelector('.saved-images'));
+    loadFromStorageImg()
+    onRenderSavedMemes()
+    document.querySelector('.save-img-container').classList.remove('hidden')
+    document.querySelector('.image-gallery-container').classList.add('hidden')
+    document.querySelector('.meme-editor-container').classList.add('hidden')
 }
 
 function onOpenGallery() {
-    // document.querySelector('.image-gallery-container').classList.remove('hidden');
-    // document.querySelector('.image-gallery-container').hidden = false
-    document.querySelector('.image-gallery-container').style.display = 'flex'
-    document.querySelector('.save-img-container').hidden = true
-    document.querySelector('.save-img-container').style.display = 'none'
-    document.querySelector('.meme-editor-container').hidden = true
-    document.querySelector('.meme-editor-container').style.display = 'none'
+    document.querySelector('.save-img-container').classList.add('hidden')
+    document.querySelector('.image-gallery-container').classList.remove('hidden')
+    document.querySelector('.meme-editor-container').classList.add('hidden')
+}
+
+function onOpenEditor() {
+    document.querySelector('.save-img-container').classList.add('hidden')
+    document.querySelector('.image-gallery-container').classList.add('hidden')
+    document.querySelector('.meme-editor-container').classList.remove('hidden')
 }
 
 function shareOnFacebook() {
     uploadImg()
 }
-
 
 function uploadImg() { //shows the url link and button share
     const imgDataUrl = gElCanvas.toDataURL("image/jpeg"); //url translated
@@ -608,22 +468,12 @@ function doUploadImg(imgDataUrl, onSuccess) {
 
 }
 
-
-
-
-
-
-//DRAW IMAGE ON CANVAS FROM GMEME
-// function drawImgOnCanvas2(gMeme) {
-//     document.querySelector('.meme-editor-container').classList.remove('hidden');
-
-//     var image = getImg(gMeme.selectedImgId)
-//     var img = new Image()
-//     img.src = image.url
-//     var heightCanvas = (image.url.offsetHeight * gElCanvas.width) / image.url.offsetWidth
-//     img.onload = () => {
-//         gCtx.drawImage(img, 0, 0, gElCanvas.width, heightCanvas) //img,x,y,xend,yend
-//     }
-//     document.querySelector('.image-gallery-container').classList.add('hidden');
-
-// }
+function toggleMenu() {
+    if (document.body.classList.contains('menu-open')) {
+        document.querySelector('.btn-menu').innerText = '☰'
+        document.body.classList.remove('menu-open')
+    } else {
+        document.body.classList.add('menu-open')
+        document.querySelector('.btn-menu').innerText = 'X'
+    }
+}

@@ -1,0 +1,109 @@
+/*images-gallery*/
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 5px;
+    cursor: pointer;
+    padding-bottom: 130px;
+
+}
+
+
+
+.image-gallery {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: contain;
+}
+
+
+.gallery-control {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-block: 20px;
+}
+
+.words-filter {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 1.5rem;
+
+}
+
+.word-item {
+    color: #4CB8C4;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+.word-item:hover {
+    color: #3dc2a1;
+    text-shadow: 0 0 10px rgb(167, 167, 167);
+
+}
+
+.search-input {
+    height: 30px;
+    border-radius: 7px;
+    margin: 0 10px 10px 5px;
+}
+
+.submit-btn {
+    background-image: linear-gradient(to right, #4CB8C4 0%, #7eccb9 51%, #4CB8C4 100%);
+    margin: 5px;
+    height: 35px;
+    padding: 5px;
+    width: fit-content;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.3s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
